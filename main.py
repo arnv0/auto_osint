@@ -31,30 +31,40 @@ def runcmd_rt(cmd,input=b'',timeout=0):
     #no limit
     if timeout==0:
         t2 = time.perf_counter()
-        #sys.stderr.write('elapsed: '+'{:.1f}'.format(t2-t1)+'\n')
-        return proc.communicate(input=input)[0]
+        stdout,stderr = proc.communicate(input=input)
+        #sys.stderr.write(stderr.decode())
+        return stdout
     else:
         while proc.poll() == None:
             t2 = time.perf_counter()
             sys.stderr.write('{:.1f}'.format(t2-t1))
             sys.stderr.write('\b'*10)
             if (t2-t1) >= timeout:
+                sys.stderr.write('timeout expired!\n')
                 proc.terminate()
                 sys.stderr.write('elapsed: '+'{:.1f}'.format(t2-t1)+'\n')
-                return proc.communicate(input=input)[0]
+                stdout,stderr = proc.communicate(input=input)
+                #sys.stderr.write(stderr.decode())
+                return stdout
         t2 = time.perf_counter()
         sys.stderr.write('elapsed: '+'{:.1f}'.format(t2-t1)+'\n')
-        return proc.communicate(input=input)[0]
+        stdout,stderr = proc.communicate(input=input)
+        #sys.stderr.write(stderr.decode())
+        return stdout
 
 #domain enumeration
 def domain(input_data,timeout,output_dir,stdout,errlog_file):
     outpath = output_dir+'/auto_osint_output/'
     domain_ip_file = open(outpath+'domain-ip.list','w')
     input_domain = input_data[0]
+    if len(input_domain) == 0:
+        sys.stderr.write('domain module specified without any input domains!\nquitting...\n')
+        sys.exit(1)
     big_domain_list = []
     domain_ip_table = {}
     failed_lookups = []
     for d in input_domain:
+        sys.stderr.write('gathering subdomains for '+d+'\n')
         tmp = runcmd_rt('subfinder -d '+d,timeout=timeout).decode().split('\n')
         for line in tmp:
             big_domain_list.append(line)
@@ -70,6 +80,7 @@ def domain(input_data,timeout,output_dir,stdout,errlog_file):
                 domain_ip_table[domain] = tmp
         else:
             pass
+
     if len(failed_lookups) != 0:
         sys.stderr.write('\nhost lookup failed for the following domains:\n')
         errlog_file.write('\nhost lookup failed for the following domains:\n')
@@ -84,6 +95,32 @@ def domain(input_data,timeout,output_dir,stdout,errlog_file):
             sys.stdout.write(record+'\n')
     return (domain_ip_table,failed_lookups)
 
+def ip(input_data,timeout,output_dir,stdout,errlog_file):
+    global previous_input
+    input_ip = input_data[1]
+    if len(input_ip) == 0:
+        sys.stderr.write('ip module specified without any input IP addresses!\nquitting...\n')
+        sys.exit(1)
+    big_ip_list = []
+    if previous_input != None:
+        tmp_ip_data = previous_input[0].values()
+        for i in tmp_ip_data:
+            for j in i:
+                big_ip_list.append(j)
+        big_ip_list = list(set(big_ip_list))
+        input_ip = input_ip + big_ip_list
+    try:
+        os.mkdir(output_dir+'/auto_osint_output'+'/nmap')
+    except OSError:
+        sys.stderr.write('unable to create nmap directory!\nquitting...\n')
+        sys.exit(1)
+    for ip in input_ip:
+        sys.stderr.write('running nmap on '+ip+'\n')
+        print(runcmd_rt('nmap -p- -sT -nvv '+ip+' -oA '+output_dir+'/auto_osint_output'+'/nmap/'+ip,timeout=timeout))
+
+
+
+
 
 #debug
 def debug(*anyargs):
@@ -94,10 +131,13 @@ def tbd(*anyargs):
 
 args = _parser.parse_args()
 
-module_table = {'debug':debug,'domain':domain,'ip':tbd}
+module_table = {'debug':debug,'domain':domain,'ip':ip}
+
+global previous_input
 
 if __name__=='__main__':
 
+    global previous_input
     #print(args)
     args_valid = True
 
@@ -159,9 +199,9 @@ if __name__=='__main__':
         input_data = (input_domain,input_ip)
         print(input_data)
 
-        for module in args.modules.split(','):
-            if module not in module_table.keys():
+        for module in module_table.keys():
+            if module not in args.modules.split(','):
                 sys.stderr.write('the module {} specified is invalid!\nignoring...\n'.format(module))
                 pass
             else:
-                module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file)
+                previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file)
