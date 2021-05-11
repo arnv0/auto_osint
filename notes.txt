@@ -1,0 +1,10 @@
+#theharvester - leaked email
+#aquaton-discover
+#3rd party apks url / rouge
+#wapalayzer
+#free apis - shodan, wapalyzer
+#backend technologies - look for cve details, vulnscans, whatweb
+#hunter.io 
+#de-hashes
+#haveibeenpwned
+#sslscan.py
