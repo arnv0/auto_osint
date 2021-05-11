@@ -1,6 +1,6 @@
 #!/bin/sh
 """true"
-exec python -u "$0" "$@"
+exec /usr/bin/python3 -u "$0" "$@"
 """
 
 import os
