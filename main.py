@@ -21,6 +21,8 @@ _parser.add_argument('--modules',type=str,dest='modules',help='domain, ip, debug
 _parser.add_argument('--timeout',type=int,default=0,help='time to wait before terminating subprocess (default=0)')
 _parser.add_argument('--input',type=str,help='comma seperated list of domains and/or ip addresses')
 _parser.add_argument('--infile',type=str,help='file containing newline seperated list of domains and/or ip addresses')
+_parser.add_argument('--stdout',action='store_true',help='write output to stdout')
+_parser.add_argument('-o',dest='output_dir',default='.',help='output directory. by default writes output to current directory')
 
 #wrapper around subprocess.Popen
 def runcmd_rt(cmd,input=b'',timeout=0):
@@ -44,23 +46,62 @@ def runcmd_rt(cmd,input=b'',timeout=0):
         sys.stderr.write('elapsed: '+'{:.1f}'.format(t2-t1)+'\n')
         return proc.communicate(input=input)[0]
 
+#domain enumeration
+def domain(input_data,timeout,output_dir,stdout,errlog_file):
+    outpath = output_dir+'/auto_osint_output/'
+    domain_ip_file = open(outpath+'domain-ip.list','w')
+    input_domain = input_data[0]
+    big_domain_list = []
+    domain_ip_table = {}
+    failed_lookups = []
+    for d in input_domain:
+        tmp = runcmd_rt('subfinder -d '+d,timeout=timeout).decode().split('\n')
+        for line in tmp:
+            big_domain_list.append(line)
+    big_domain_list = list(filter(None,big_domain_list))
+    big_domain_list = list(set(big_domain_list))
+    for domain in big_domain_list:
+        sys.stderr.write('running host lookup on {}...\n'.format(domain))
+        if domain not in domain_ip_table.keys():
+            tmp = runcmd_rt('cut -d" " -f4',input=runcmd_rt('grep "has address"',input=runcmd_rt('host '+domain))).decode().strip().split('\n')
+            if tmp == ['']:
+                failed_lookups.append(domain)
+            else:
+                domain_ip_table[domain] = tmp
+        else:
+            pass
+    if len(failed_lookups) != 0:
+        sys.stderr.write('\nhost lookup failed for the following domains:\n')
+        errlog_file.write('\nhost lookup failed for the following domains:\n')
+        for i in failed_lookups:
+            sys.stderr.write('\t'+str(i)+'\n')
+            errlog_file.write('\t'+str(i)+'\n')
+        sys.stderr.write('\n')
+    for item in domain_ip_table.items():
+        record = item[0]+':'+','.join(item[1])
+        domain_ip_file.write(record+'\n')
+        if stdout:
+            sys.stdout.write(record+'\n')
+    return (domain_ip_table,failed_lookups)
+
+
 #debug
-def debug():
+def debug(*anyargs):
     print('debug')
 
-def tbd():
+def tbd(*anyargs):
     print('to be implemented')
 
 args = _parser.parse_args()
 
-module_table = {'debug':debug,'domain':tbd,'ip':tbd}
+module_table = {'debug':debug,'domain':domain,'ip':tbd}
 
 if __name__=='__main__':
 
     #print(args)
     args_valid = True
 
-    # check if args are valid
+    #check if args are valid
 
     #inputs
     if (args.input == None and args.infile == None):
@@ -81,6 +122,18 @@ if __name__=='__main__':
             else:
                 sys.stderr.write('input file does not exist!\n')
                 args_valid = False
+
+    #outputs
+    if not os.path.isdir(args.output_dir):
+        sys.stderr.write('output directory path is invalid!\n')
+        args_valid = False
+    else:
+        try:
+            os.mkdir(args.output_dir+'/auto_osint_output')
+        except OSError as err:
+            sys.stderr.write('cannot create subdirectory!\n')
+            args_valid = False
+        errlog_file = open(args.output_dir+'/auto_osint_output/error.log','w')
 
     #modules
     if args.modules == None:
@@ -103,11 +156,12 @@ if __name__=='__main__':
             else:
                 input_domain.append(i)
 
-        print(input_ip,input_domain)
+        input_data = (input_domain,input_ip)
+        print(input_data)
 
         for module in args.modules.split(','):
             if module not in module_table.keys():
                 sys.stderr.write('the module {} specified is invalid!\nignoring...\n'.format(module))
                 pass
             else:
-                module_table[module]()
+                module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file)
