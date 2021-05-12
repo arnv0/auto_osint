@@ -1,0 +1,14 @@
+# Nmap 7.91 scan initiated Wed May 12 15:14:01 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/124.153.91.197 124.153.91.197
+Nmap scan report for 124.153.91.197
+Host is up, received syn-ack (0.019s latency).
+Scanned at 2021-05-12 15:14:02 IST for 167s
+Not shown: 65531 filtered ports
+Reason: 65531 no-responses
+PORT     STATE SERVICE    REASON
+25/tcp   open  smtp       syn-ack
+443/tcp  open  https      syn-ack
+587/tcp  open  submission syn-ack
+8008/tcp open  http       syn-ack
+
+Read data files from: /usr/bin/../share/nmap
+# Nmap done at Wed May 12 15:16:49 2021 -- 1 IP address (1 host up) scanned in 167.27 seconds

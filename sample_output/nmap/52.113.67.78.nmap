@@ -1,0 +1,12 @@
+# Nmap 7.91 scan initiated Wed May 12 15:32:11 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/52.113.67.78 52.113.67.78
+Nmap scan report for 52.113.67.78
+Host is up, received syn-ack (0.032s latency).
+Scanned at 2021-05-12 15:32:11 IST for 47s
+Not shown: 54684 filtered ports, 10849 closed ports
+Reason: 54684 no-responses and 10849 conn-refused
+PORT    STATE SERVICE REASON
+80/tcp  open  http    syn-ack
+443/tcp open  https   syn-ack
+
+Read data files from: /usr/bin/../share/nmap
+# Nmap done at Wed May 12 15:32:58 2021 -- 1 IP address (1 host up) scanned in 47.45 seconds

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.91 scan initiated Wed May 12 15:07:02 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/192.168.1.41 192.168.1.41 -->
+<nmaprun scanner="nmap" args="nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/192.168.1.41 192.168.1.41" start="1620812222" startstr="Wed May 12 15:07:02 2021" version="7.91" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="2"/>
+<debugging level="0"/>
+<taskbegin task="Ping Scan" time="1620812222"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="192.168.1.41" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<taskend task="Ping Scan" time="1620812222" extrainfo="1 total hosts"/>
+<taskbegin task="Connect Scan" time="1620812222"/>
+<taskend task="Connect Scan" time="1620812224" extrainfo="65535 total ports"/>
+<host starttime="1620812222" endtime="1620812224"><status state="up" reason="conn-refused" reason_ttl="0"/>
+<address addr="192.168.1.41" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="65534">
+<extrareasons reason="conn-refused" count="65534"/>
+</extraports>
+<port protocol="tcp" portid="1716"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="xmsg" method="table" conf="3"/></port>
+</ports>
+<times srtt="57" rttvar="58" to="100000"/>
+</host>
+<runstats><finished time="1620812224" timestr="Wed May 12 15:07:04 2021" summary="Nmap done at Wed May 12 15:07:04 2021; 1 IP address (1 host up) scanned in 2.00 seconds" elapsed="2.00" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

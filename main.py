@@ -87,36 +87,68 @@ def domain(input_data,timeout,output_dir,stdout,errlog_file):
         for i in failed_lookups:
             sys.stderr.write('\t'+str(i)+'\n')
             errlog_file.write('\t'+str(i)+'\n')
-        sys.stderr.write('\n')
+        sys.stderr.write('try increasing the timeout option or running a manual scan\n\n')
     for item in domain_ip_table.items():
         record = item[0]+':'+','.join(item[1])
         domain_ip_file.write(record+'\n')
         if stdout:
             sys.stdout.write(record+'\n')
-    return (domain_ip_table,failed_lookups)
+    return (domain_ip_table,'domain')
 
 def ip(input_data,timeout,output_dir,stdout,errlog_file):
     global previous_input
     input_ip = input_data[1]
+    failed_scans = []
     if len(input_ip) == 0:
         sys.stderr.write('ip module specified without any input IP addresses!\nquitting...\n')
         sys.exit(1)
     big_ip_list = []
     if previous_input != None:
-        tmp_ip_data = previous_input[0].values()
-        for i in tmp_ip_data:
-            for j in i:
-                big_ip_list.append(j)
-        big_ip_list = list(set(big_ip_list))
-        input_ip = input_ip + big_ip_list
+        if previous_input[1] == 'domain':
+            tmp_ip_data = previous_input[0].values()
+            for i in tmp_ip_data:
+                for j in i:
+                    big_ip_list.append(j)
+            big_ip_list = list(set(big_ip_list))
+            input_ip = input_ip + big_ip_list
     try:
         os.mkdir(output_dir+'/auto_osint_output'+'/nmap')
     except OSError:
         sys.stderr.write('unable to create nmap directory!\nquitting...\n')
         sys.exit(1)
+    ip_port_table = {}
     for ip in input_ip:
+        if ip not in ip_port_table.keys():
+            ip_port_table[ip] = []
+        else:
+            pass
         sys.stderr.write('running nmap on '+ip+'\n')
-        print(runcmd_rt('nmap -p- -sT -nvv '+ip+' -oA '+output_dir+'/auto_osint_output'+'/nmap/'+ip,timeout=timeout))
+        runcmd_rt('nmap -p- -sT -nvv '+ip+' -oA '+output_dir+'/auto_osint_output'+'/nmap/'+ip,timeout=timeout)
+    for ip in ip_port_table.keys():
+        tmp = list(filter(None,runcmd_rt('cut -d"/" -f1',input=runcmd_rt('grep open',input=runcmd_rt('cat auto_osint_output/nmap/'+ip+'.nmap'))).decode().split('\n')))
+        if tmp == []:
+            failed_scans.append(ip)
+        else:
+            ip_port_table[ip] = tmp
+    try:
+        os.mkdir(output_dir+'/auto_osint_output'+'/port_scans')
+    except OSError:
+        sys.stderr.write('unable to create port_scans directory!\nquitting...\n')
+        sys.exit(1)
+    for item in ip_port_table.items():
+        record = item[0]+':'+','.join(item[1])+'\n'
+        open(output_dir+'/auto_osint_output/port_scans/'+ip+'_open.ports','w').write(record)
+        if stdout:
+            sys.stdout.write(record)
+    if len(failed_scans) != 0:
+        sys.stderr.write('nmap scans failed to find open ports on the following IP addresses:\n\n')
+        errlog_file.write('nmap scans failed to find open ports on the following IP addresses:\n\n')
+        for i in failed_scans:
+            sys.stderr.write('\t'+str(i)+'\n')
+            errlog_file.write('\t'+str(i)+'\n')
+        sys.stderr.write('try increasing the timeout option or running a manual scan\n\n')
+        errlog_file.write('try increasing the timeout option or running a manual scan\n\n')
+    return (ip_port_table,'ip')
 
 
 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.91 scan initiated Wed May 12 15:16:49 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/14.141.70.161 14.141.70.161 -->
+<nmaprun scanner="nmap" args="nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/14.141.70.161 14.141.70.161" start="1620812809" startstr="Wed May 12 15:16:49 2021" version="7.91" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="2"/>
+<debugging level="0"/>
+<taskbegin task="Ping Scan" time="1620812809"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="14.141.70.161" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<taskend task="Ping Scan" time="1620812809" extrainfo="1 total hosts"/>
+<taskbegin task="Connect Scan" time="1620812809"/>
+<taskprogress task="Connect Scan" time="1620812840" percent="47.62" remaining="35" etc="1620812874"/>
+<taskend task="Connect Scan" time="1620812869" extrainfo="65535 total ports"/>
+<host starttime="1620812809" endtime="1620812869"><status state="up" reason="conn-refused" reason_ttl="0"/>
+<address addr="14.141.70.161" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="65512">
+<extrareasons reason="conn-refused" count="65512"/>
+</extraports>
+<port protocol="tcp" portid="135"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="msrpc" method="table" conf="3"/></port>
+<port protocol="tcp" portid="137"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="netbios-ns" method="table" conf="3"/></port>
+<port protocol="tcp" portid="139"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="netbios-ssn" method="table" conf="3"/></port>
+<port protocol="tcp" portid="445"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="microsoft-ds" method="table" conf="3"/></port>
+<port protocol="tcp" portid="1022"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="exp2" method="table" conf="3"/></port>
+<port protocol="tcp" portid="1023"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="netvenuechat" method="table" conf="3"/></port>
+<port protocol="tcp" portid="1026"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="LSA-or-nterm" method="table" conf="3"/></port>
+<port protocol="tcp" portid="1485"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="lansource" method="table" conf="3"/></port>
+<port protocol="tcp" portid="1568"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="tsspmap" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2037"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="applus" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2410"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="vrts-registry" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2588"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="privilege" method="table" conf="3"/></port>
+<port protocol="tcp" portid="3334"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="directv-web" method="table" conf="3"/></port>
+<port protocol="tcp" portid="3456"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="vat" method="table" conf="3"/></port>
+<port protocol="tcp" portid="4257"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="vrml-multi-use" method="table" conf="3"/></port>
+<port protocol="tcp" portid="4424"><state state="filtered" reason="no-response" reason_ttl="0"/></port>
+<port protocol="tcp" portid="4645"><state state="filtered" reason="no-response" reason_ttl="0"/></port>
+<port protocol="tcp" portid="7547"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="cwmp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="7743"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="sstp-1" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9410"><state state="filtered" reason="no-response" reason_ttl="0"/></port>
+<port protocol="tcp" portid="9898"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="monkeycom" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9995"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="palace-4" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9996"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="palace-5" method="table" conf="3"/></port>
+</ports>
+<times srtt="14118" rttvar="2425" to="100000"/>
+</host>
+<runstats><finished time="1620812869" timestr="Wed May 12 15:17:49 2021" summary="Nmap done at Wed May 12 15:17:49 2021; 1 IP address (1 host up) scanned in 60.72 seconds" elapsed="60.72" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.91 scan initiated Wed May 12 15:20:17 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/206.183.111.188 206.183.111.188 -->
+<nmaprun scanner="nmap" args="nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/206.183.111.188 206.183.111.188" start="1620813017" startstr="Wed May 12 15:20:17 2021" version="7.91" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="2"/>
+<debugging level="0"/>
+<taskbegin task="Ping Scan" time="1620813017"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="206.183.111.188" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<taskend task="Ping Scan" time="1620813017" extrainfo="1 total hosts"/>
+<taskbegin task="Connect Scan" time="1620813017"/>
+<taskprogress task="Connect Scan" time="1620813048" percent="19.98" remaining="125" etc="1620813172"/>
+<taskprogress task="Connect Scan" time="1620813078" percent="47.94" remaining="67" etc="1620813144"/>
+<taskend task="Connect Scan" time="1620813122" extrainfo="65535 total ports"/>
+<host starttime="1620813017" endtime="1620813122"><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="206.183.111.188" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="filtered" count="65509">
+<extrareasons reason="no-responses" count="65509"/>
+</extraports>
+<port protocol="tcp" portid="20"><state state="closed" reason="conn-refused" reason_ttl="0"/><service name="ftp-data" method="table" conf="3"/></port>
+<port protocol="tcp" portid="21"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ftp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="22"><state state="closed" reason="conn-refused" reason_ttl="0"/><service name="ssh" method="table" conf="3"/></port>
+<port protocol="tcp" portid="25"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="smtp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="53"><state state="closed" reason="conn-refused" reason_ttl="0"/><service name="domain" method="table" conf="3"/></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" method="table" conf="3"/></port>
+<port protocol="tcp" portid="110"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="pop3" method="table" conf="3"/></port>
+<port protocol="tcp" portid="143"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="imap" method="table" conf="3"/></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="https" method="table" conf="3"/></port>
+<port protocol="tcp" portid="465"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="smtps" method="table" conf="3"/></port>
+<port protocol="tcp" portid="587"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="submission" method="table" conf="3"/></port>
+<port protocol="tcp" portid="993"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="imaps" method="table" conf="3"/></port>
+<port protocol="tcp" portid="995"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="pop3s" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2077"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="tsrmagt" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2078"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="tpcsrvr" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2079"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="idware-router" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2080"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="autodesk-nlm" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2082"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="infowave" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2083"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="radsec" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2086"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="gnunet" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2087"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="eli" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2095"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="nbx-ser" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2096"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="nbx-dir" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2245"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="hao" method="table" conf="3"/></port>
+<port protocol="tcp" portid="2930"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="amx-weblinx" method="table" conf="3"/></port>
+<port protocol="tcp" portid="3306"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="mysql" method="table" conf="3"/></port>
+</ports>
+<times srtt="18104" rttvar="6920" to="100000"/>
+</host>
+<runstats><finished time="1620813122" timestr="Wed May 12 15:22:02 2021" summary="Nmap done at Wed May 12 15:22:02 2021; 1 IP address (1 host up) scanned in 104.83 seconds" elapsed="104.83" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

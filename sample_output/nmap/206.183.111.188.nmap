@@ -1,0 +1,36 @@
+# Nmap 7.91 scan initiated Wed May 12 15:20:17 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/206.183.111.188 206.183.111.188
+Nmap scan report for 206.183.111.188
+Host is up, received syn-ack (0.018s latency).
+Scanned at 2021-05-12 15:20:17 IST for 105s
+Not shown: 65509 filtered ports
+Reason: 65509 no-responses
+PORT     STATE  SERVICE       REASON
+20/tcp   closed ftp-data      conn-refused
+21/tcp   open   ftp           syn-ack
+22/tcp   closed ssh           conn-refused
+25/tcp   open   smtp          syn-ack
+53/tcp   closed domain        conn-refused
+80/tcp   open   http          syn-ack
+110/tcp  open   pop3          syn-ack
+143/tcp  open   imap          syn-ack
+443/tcp  open   https         syn-ack
+465/tcp  open   smtps         syn-ack
+587/tcp  open   submission    syn-ack
+993/tcp  open   imaps         syn-ack
+995/tcp  open   pop3s         syn-ack
+2077/tcp open   tsrmagt       syn-ack
+2078/tcp open   tpcsrvr       syn-ack
+2079/tcp open   idware-router syn-ack
+2080/tcp open   autodesk-nlm  syn-ack
+2082/tcp open   infowave      syn-ack
+2083/tcp open   radsec        syn-ack
+2086/tcp open   gnunet        syn-ack
+2087/tcp open   eli           syn-ack
+2095/tcp open   nbx-ser       syn-ack
+2096/tcp open   nbx-dir       syn-ack
+2245/tcp open   hao           syn-ack
+2930/tcp open   amx-weblinx   syn-ack
+3306/tcp open   mysql         syn-ack
+
+Read data files from: /usr/bin/../share/nmap
+# Nmap done at Wed May 12 15:22:02 2021 -- 1 IP address (1 host up) scanned in 104.83 seconds

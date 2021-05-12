@@ -1,0 +1,16 @@
+# Nmap 7.91 scan initiated Wed May 12 15:07:04 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/52.176.6.37 52.176.6.37
+Nmap scan report for 52.176.6.37
+Host is up, received syn-ack (0.24s latency).
+Scanned at 2021-05-12 15:07:04 IST for 417s
+Not shown: 65529 filtered ports
+Reason: 65529 no-responses
+PORT     STATE SERVICE        REASON
+80/tcp   open  http           syn-ack
+443/tcp  open  https          syn-ack
+1221/tcp open  sweetware-apps syn-ack
+4022/tcp open  dnox           syn-ack
+4024/tcp open  tnp1-port      syn-ack
+7654/tcp open  unknown        syn-ack
+
+Read data files from: /usr/bin/../share/nmap
+# Nmap done at Wed May 12 15:14:01 2021 -- 1 IP address (1 host up) scanned in 417.39 seconds

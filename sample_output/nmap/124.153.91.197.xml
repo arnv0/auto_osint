@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.91 scan initiated Wed May 12 15:14:01 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/124.153.91.197 124.153.91.197 -->
+<nmaprun scanner="nmap" args="nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/124.153.91.197 124.153.91.197" start="1620812641" startstr="Wed May 12 15:14:01 2021" version="7.91" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="2"/>
+<debugging level="0"/>
+<taskbegin task="Ping Scan" time="1620812642"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="124.153.91.197" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<taskend task="Ping Scan" time="1620812642" extrainfo="1 total hosts"/>
+<taskbegin task="Connect Scan" time="1620812642"/>
+<taskprogress task="Connect Scan" time="1620812673" percent="17.77" remaining="144" etc="1620812816"/>
+<taskprogress task="Connect Scan" time="1620812703" percent="35.67" remaining="111" etc="1620812813"/>
+<taskprogress task="Connect Scan" time="1620812733" percent="54.14" remaining="78" etc="1620812810"/>
+<taskprogress task="Connect Scan" time="1620812763" percent="72.59" remaining="46" etc="1620812809"/>
+<taskend task="Connect Scan" time="1620812809" extrainfo="65535 total ports"/>
+<host starttime="1620812642" endtime="1620812809"><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="124.153.91.197" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="filtered" count="65531">
+<extrareasons reason="no-responses" count="65531"/>
+</extraports>
+<port protocol="tcp" portid="25"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="smtp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="https" method="table" conf="3"/></port>
+<port protocol="tcp" portid="587"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="submission" method="table" conf="3"/></port>
+<port protocol="tcp" portid="8008"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" method="table" conf="3"/></port>
+</ports>
+<times srtt="18512" rttvar="16357" to="100000"/>
+</host>
+<runstats><finished time="1620812809" timestr="Wed May 12 15:16:49 2021" summary="Nmap done at Wed May 12 15:16:49 2021; 1 IP address (1 host up) scanned in 167.27 seconds" elapsed="167.27" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>
