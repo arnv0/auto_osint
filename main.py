@@ -118,14 +118,10 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
         sys.exit(1)
     ip_port_table = {}
     for ip in input_ip:
-        if ip not in ip_port_table.keys():
-            ip_port_table[ip] = []
-        else:
-            pass
         sys.stderr.write('running nmap on '+ip+'\n')
-        runcmd_rt('nmap -p- -sT -nvv '+ip+' -oA '+output_dir+'/auto_osint_output'+'/nmap/'+ip,timeout=timeout)
-    for ip in ip_port_table.keys():
-        tmp = list(filter(None,runcmd_rt('cut -d"/" -f1',input=runcmd_rt('grep open',input=runcmd_rt('cat auto_osint_output/nmap/'+ip+'.nmap'))).decode().split('\n')))
+        #runcmd_rt('nmap -p- -sT -nvv '+ip+' -oA '+output_dir+'/auto_osint_output'+'/nmap/'+ip,timeout=timeout)
+    for ip in input_ip:
+        tmp = list(filter(None,runcmd_rt('cut -d"/" -f1',input=runcmd_rt('grep open',input=runcmd_rt('cat sample_output/nmap/'+ip+'.nmap'))).decode().split('\n')))
         if tmp == []:
             failed_scans.append(ip)
         else:
@@ -137,7 +133,7 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
         sys.exit(1)
     for item in ip_port_table.items():
         record = item[0]+':'+','.join(item[1])+'\n'
-        open(output_dir+'/auto_osint_output/port_scans/'+ip+'_open.ports','w').write(record)
+        open(output_dir+'/auto_osint_output/port_scans/'+str(item[0])+'_open.ports','w').write(record)
         if stdout:
             sys.stdout.write(record)
     if len(failed_scans) != 0:
@@ -151,6 +147,12 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
     return (ip_port_table,'ip')
 
 
+def web(input_data,timeout,output_dir,stdout,errlog_file):
+    global previous_input
+    outpath = output_dir+'/auto_osint_output/'
+    input_domain = input_data[0]
+    input_ip = input_data[1]
+
 
 
 
@@ -163,7 +165,7 @@ def tbd(*anyargs):
 
 args = _parser.parse_args()
 
-module_table = {'debug':debug,'domain':domain,'ip':ip}
+module_table = {'debug':debug,'domain':domain,'ip':ip,web:'tbd'}
 
 global previous_input
 
@@ -217,7 +219,7 @@ if __name__=='__main__':
         sys.stderr.write('quitting...\n\n')
         _parser.print_help()
         sys.exit(1)
-    else:
+    else: #fix inputs
         input_data = list(filter(None,input_data))
         input_ip = []
         input_domain = []
@@ -233,7 +235,7 @@ if __name__=='__main__':
 
         for module in module_table.keys():
             if module not in args.modules.split(','):
-                sys.stderr.write('the module {} specified is invalid!\nignoring...\n'.format(module))
                 pass
+                #sys.stderr.write('the module {} specified is invalid!\nignoring...\n'.format(module))
             else:
                 previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file)
