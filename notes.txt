@@ -1,13 +1,13 @@
-#theharvester - leaked email
+#theharvester - leaked email // output incompatible
 #aquaton-discover
 #3rd party apks url / rouge
 #wapalayzer
 #free apis - shodan, wapalyzer
-#backend technologies - look for cve details, vulnscans, whatweb
+#backend technologies - look for cve details, vulnscans, whatweb // cant parse whatweb
 #hunter.io 
 #de-hashes
-#haveibeenpwned
-#sslscan.py
+#haveibeenpwned # paid api
+#sslscan.py #tbd
 
 
 #todo:-

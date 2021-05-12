@@ -80,7 +80,6 @@ def domain(input_data,timeout,output_dir,stdout,errlog_file):
                 domain_ip_table[domain] = tmp
         else:
             pass
-
     if len(failed_lookups) != 0:
         sys.stderr.write('\nhost lookup failed for the following domains:\n')
         errlog_file.write('\nhost lookup failed for the following domains:\n')
@@ -119,7 +118,7 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
     ip_port_table = {}
     for ip in input_ip:
         sys.stderr.write('running nmap on '+ip+'\n')
-        #runcmd_rt('nmap -p- -sT -nvv '+ip+' -oA '+output_dir+'/auto_osint_output'+'/nmap/'+ip,timeout=timeout)
+        runcmd_rt('nmap -p- -sV -sT -nvv '+ip+' -oA '+output_dir+'/auto_osint_output'+'/nmap/'+ip,timeout=timeout)
     for ip in input_ip:
         tmp = list(filter(None,runcmd_rt('cut -d"/" -f1',input=runcmd_rt('grep open',input=runcmd_rt('cat auto_osint_output/nmap/'+ip+'.nmap'))).decode().split('\n')))
         if tmp == []:
@@ -149,9 +148,53 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
 
 def web(input_data,timeout,output_dir,stdout,errlog_file):
     global previous_input
-    outpath = output_dir+'/auto_osint_output/'
-    input_domain = input_data[0]
-    input_ip = input_data[1]
+    input_ip = input_data[0]
+    input_domain = input_data[1]
+    webserver_list = []
+    if previous_input == (None,None):
+        sys.stderr.write('web module must be run with ip module!\nquitting...\n')
+        sys.exit(1)
+    elif previous_input[1] == 'ip':
+        ip_port_table = previous_input[0]
+        if ip_port_table == {}:
+            sys.stderr.write('web module was unable to detect any webservers!\n')
+            return (None,'web')
+        else:
+            for ip in ip_port_table.keys():
+                for line in open(output_dir+'/auto_osint_output/nmap/'+str(ip)+'.nmap').read().split('\n'):
+                    for port in ip_port_table[ip]:
+                        if port in line:
+                            if 'open' in line:
+                                if 'ssl/http' in line:
+                                    webserver_list.append({'ip':ip,'port':port,'ssl':True,'backend':'unknown'})
+                                elif 'http' in line:
+                                    webserver_list.append({'ip':ip,'port':port,'ssl':False,'backend':'unknown'})
+            if len(webserver_list) == 0:
+                sys.stderr.write('web module was unable to detect any webservers!\n')
+            else:
+                sys.stderr.write('webservers found!\n')
+                for webserv in webserver_list:
+                    sys.stderr.write('running whatweb on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
+                    backend = runcmd_rt('whatweb --color=never '+webserv['ip']+':'+webserv['port'])
+                    webserv['backend'] = backend.decode().strip('\n')
+                    sys.stderr.write('running gobuster on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
+                    try:
+                        os.mkdir(output_dir+'/auto_osint_output'+'/gobuster')
+                    except OSError:
+                        sys.stderr.write('unable to create subdirectory for gobuster!\n')
+                    if webserv['ssl']:
+                        runcmd_rt('gobuster dir -u https://'+webserv['ip']+':'+webserv['port']+' -w wordlists/bustlist.txt -o '+output_dir+'/auto_osint_output/gobuster/'+webserv['ip']+'.out',timeout=timeout)
+                    else:
+                        runcmd_rt('gobuster dir -u http://'+webserv['ip']+':'+webserv['port']+' -w wordlists/bustlist.txt -o '+output_dir+'/auto_osint_output/gobuster/'+webserv['ip']+'.out',timeout=timeout)
+
+                print(webserver_list)
+    else:
+        sys.stderr.write('web module dependency error!\nquitting...\n')
+        sys.exit(1)
+
+
+
+
 
 
 
@@ -165,13 +208,14 @@ def tbd(*anyargs):
 
 args = _parser.parse_args()
 
-module_table = {'debug':debug,'domain':domain,'ip':ip,web:'tbd'}
+module_table = {'debug':debug,'domain':domain,'ip':ip, 'web':web}
 
 global previous_input
 
 if __name__=='__main__':
 
     global previous_input
+    previous_input = (None,None)
     #print(args)
     args_valid = True
 
@@ -231,11 +275,7 @@ if __name__=='__main__':
                 input_domain.append(i)
 
         input_data = (input_domain,input_ip)
-        print(input_data)
 
         for module in module_table.keys():
-            if module not in args.modules.split(','):
-                pass
-                #sys.stderr.write('the module {} specified is invalid!\nignoring...\n'.format(module))
-            else:
+            if module in args.modules.split(','):
                 previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file)
