@@ -1,5 +1,0 @@
-# Nmap 7.91 scan initiated Wed May 12 15:16:49 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/14.141.70.161 14.141.70.161
-# Ports scanned: TCP(65535;1-65535) UDP(0;) SCTP(0;) PROTOCOLS(0;)
-Host: 14.141.70.161 ()	Status: Up
-Host: 14.141.70.161 ()	Ports: 135/filtered/tcp//msrpc///, 137/filtered/tcp//netbios-ns///, 139/filtered/tcp//netbios-ssn///, 445/filtered/tcp//microsoft-ds///, 1022/filtered/tcp//exp2///, 1023/filtered/tcp//netvenuechat///, 1026/filtered/tcp//LSA-or-nterm///, 1485/filtered/tcp//lansource///, 1568/filtered/tcp//tsspmap///, 2037/filtered/tcp//applus///, 2410/filtered/tcp//vrts-registry///, 2588/filtered/tcp//privilege///, 3334/filtered/tcp//directv-web///, 3456/filtered/tcp//vat///, 4257/filtered/tcp//vrml-multi-use///, 4424/filtered/tcp/////, 4645/filtered/tcp/////, 7547/filtered/tcp//cwmp///, 7743/filtered/tcp//sstp-1///, 9410/filtered/tcp/////, 9898/filtered/tcp//monkeycom///, 9995/filtered/tcp//palace-4///, 9996/filtered/tcp//palace-5///	Ignored State: closed (65512)
-# Nmap done at Wed May 12 15:17:49 2021 -- 1 IP address (1 host up) scanned in 60.72 seconds

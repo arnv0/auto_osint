@@ -1,5 +1,0 @@
-# Nmap 7.91 scan initiated Wed May 12 15:07:01 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/127.0.0.1 127.0.0.1
-# Ports scanned: TCP(65535;1-65535) UDP(0;) SCTP(0;) PROTOCOLS(0;)
-Host: 127.0.0.1 ()	Status: Up
-Host: 127.0.0.1 ()	Ports: 1716/open/tcp//xmsg///, 6463/open/tcp/////	Ignored State: closed (65533)
-# Nmap done at Wed May 12 15:07:02 2021 -- 1 IP address (1 host up) scanned in 0.93 seconds

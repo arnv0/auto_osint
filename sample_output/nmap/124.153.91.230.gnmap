@@ -1,5 +1,0 @@
-# Nmap 7.91 scan initiated Wed May 12 15:23:47 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/124.153.91.230 124.153.91.230
-# Ports scanned: TCP(65535;1-65535) UDP(0;) SCTP(0;) PROTOCOLS(0;)
-Host: 124.153.91.230 ()	Status: Up
-Host: 124.153.91.230 ()	Ports: 25/open/tcp//smtp///, 110/open/tcp//pop3///, 143/open/tcp//imap///, 389/open/tcp//ldap///, 443/open/tcp//https///, 465/open/tcp//smtps///, 587/open/tcp//submission///, 993/open/tcp//imaps///, 995/open/tcp//pop3s///, 5666/open/tcp//nrpe///, 8008/open/tcp//http///, 8080/open/tcp//http-proxy///, 8443/open/tcp//https-alt///, 11025/open/tcp/////	Ignored State: filtered (65521)
-# Nmap done at Wed May 12 15:26:37 2021 -- 1 IP address (1 host up) scanned in 170.28 seconds

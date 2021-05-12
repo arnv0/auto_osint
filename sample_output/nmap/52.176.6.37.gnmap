@@ -1,5 +1,0 @@
-# Nmap 7.91 scan initiated Wed May 12 15:07:04 2021 as: nmap -p- -sT -nvv -oA ./auto_osint_output/nmap/52.176.6.37 52.176.6.37
-# Ports scanned: TCP(65535;1-65535) UDP(0;) SCTP(0;) PROTOCOLS(0;)
-Host: 52.176.6.37 ()	Status: Up
-Host: 52.176.6.37 ()	Ports: 80/open/tcp//http///, 443/open/tcp//https///, 1221/open/tcp//sweetware-apps///, 4022/open/tcp//dnox///, 4024/open/tcp//tnp1-port///, 7654/open/tcp//unknown///	Ignored State: filtered (65529)
-# Nmap done at Wed May 12 15:14:01 2021 -- 1 IP address (1 host up) scanned in 417.39 seconds
