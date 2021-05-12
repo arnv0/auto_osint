@@ -121,7 +121,7 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
         sys.stderr.write('running nmap on '+ip+'\n')
         #runcmd_rt('nmap -p- -sT -nvv '+ip+' -oA '+output_dir+'/auto_osint_output'+'/nmap/'+ip,timeout=timeout)
     for ip in input_ip:
-        tmp = list(filter(None,runcmd_rt('cut -d"/" -f1',input=runcmd_rt('grep open',input=runcmd_rt('cat sample_output/nmap/'+ip+'.nmap'))).decode().split('\n')))
+        tmp = list(filter(None,runcmd_rt('cut -d"/" -f1',input=runcmd_rt('grep open',input=runcmd_rt('cat auto_osint_output/nmap/'+ip+'.nmap'))).decode().split('\n')))
         if tmp == []:
             failed_scans.append(ip)
         else:
