@@ -51,7 +51,12 @@ def runcmd_rt(cmd,input=b'',timeout=0):
 
 #domain enumeration
 def domain(input_data,timeout,output_dir,stdout,errlog_file):
-    outpath = output_dir+'/auto_osint_output/'
+    outpath = output_dir+'/auto_osint_output/domain/'
+    try:
+        os.makedirs(output_dir+'/auto_osint_output'+'/domain',exist_ok=True)
+    except OSError:
+        sys.stderr.write('unable to create domain directory!\nquitting...\n')
+        sys.exit(1)
     domain_ip_file = open(outpath+'domain-ip.list','w')
     input_domain = input_data[0]
     if len(input_domain) == 0:
@@ -108,7 +113,7 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
             big_ip_list = list(set(big_ip_list))
             input_ip = input_ip + big_ip_list
     try:
-        os.makedirs(output_dir+'/auto_osint_output'+'/nmap',exist_ok=True)
+        os.makedirs(output_dir+'/auto_osint_output'+'/ip/nmap',exist_ok=True)
     except OSError:
         sys.stderr.write('unable to create nmap directory!\nquitting...\n')
         sys.exit(1)
@@ -123,13 +128,13 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
         else:
             ip_port_table[ip] = tmp
     try:
-        os.makedirs(output_dir+'/auto_osint_output'+'/port_scans',exist_ok=True)
+        os.makedirs(output_dir+'/auto_osint_output'+'/ip/port_scans',exist_ok=True)
     except OSError:
         sys.stderr.write('unable to create port_scans directory!\nquitting...\n')
         sys.exit(1)
     for item in ip_port_table.items():
         record = item[0]+':'+','.join(item[1])+'\n'
-        open(output_dir+'/auto_osint_output/port_scans/'+str(item[0])+'_open.ports','w').write(record)
+        open(output_dir+'/auto_osint_output/ip/port_scans/'+str(item[0])+'_open.ports','w').write(record)
         if stdout:
             sys.stdout.write(record)
     if len(failed_scans) != 0:
@@ -148,6 +153,11 @@ def web(input_data,timeout,output_dir,stdout,errlog_file):
     input_ip = input_data[0]
     input_domain = input_data[1]
     webserver_list = []
+    try:
+        os.makedirs(output_dir+'/auto_osint_output'+'/web',exist_ok=True)
+    except OSError:
+        sys.stderr.write('unable to create web directory!\nquitting...\n')
+        return (None,'web')
     if previous_input == (None,None):
         sys.stderr.write('web module must be run with ip module!\nquitting...\n')
         sys.exit(1)
@@ -158,7 +168,7 @@ def web(input_data,timeout,output_dir,stdout,errlog_file):
             return (None,'web')
         else:
             for ip in ip_port_table.keys():
-                for line in open(output_dir+'/auto_osint_output/nmap/'+str(ip)+'.nmap').read().split('\n'):
+                for line in open(output_dir+'/auto_osint_output/ip/nmap/'+str(ip)+'.nmap').read().split('\n'):
                     for port in ip_port_table[ip]:
                         if port in line:
                             if 'open' in line:
@@ -174,18 +184,30 @@ def web(input_data,timeout,output_dir,stdout,errlog_file):
                     sys.stderr.write('running whatweb on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
                     backend = runcmd_rt('whatweb --color=never '+webserv['ip']+':'+webserv['port'],timeout=timeout)
                     webserv['backend'] = backend.decode().strip('\n')
+                    try:
+                        os.makedirs(output_dir+'/auto_osint_output'+'/web/whatweb',exist_ok=True)
+                    except OSError:
+                        sys.stderr.write('unable to create whatweb directory!\nquitting...\n')
+                        return (None,'web')
+                    open(output_dir+'/auto_osint_output/web/whatweb/'+webserv['ip']+'.txt','w').write(str(webserv))
                     sys.stderr.write('running gobuster on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
                     try:
-                        os.makedirs(output_dir+'/auto_osint_output'+'/gobuster',exist_ok=True)
+                        os.makedirs(output_dir+'/auto_osint_output'+'/web/gobuster',exist_ok=True)
                     except OSError:
                         sys.stderr.write('unable to create subdirectory for gobuster!\n')
+                        return (None,'web')
+                    try:
+                        os.makedirs(output_dir+'/auto_osint_output'+'/web/ssl',exist_ok=True)
+                    except OSError:
+                        sys.stderr.write('unable to create subdirectory for sslscan!\n')
+                        return (None,'web')
                     if webserv['ssl']:
                         sys.stderr.write('running sslscan on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
-                        runcmd_rt('sslscan --xml='+output_dir+'/auto_osint_output/ssl/'+webserv['ip']+'.xml'+webserv['ip']+':'+webserv['port'],timeout=timeout)
-                        runcmd_rt('gobuster dir -u https://'+webserv['ip']+':'+webserv['port']+' -w wordlists/bustlist.txt -o '+output_dir+'/auto_osint_output/gobuster/'+webserv['ip']+'.out',timeout=timeout)
+                        runcmd_rt('sslscan --xml='+output_dir+'/auto_osint_output/web/ssl/'+webserv['ip']+'.xml'+webserv['ip']+':'+webserv['port'],timeout=timeout)
+                        runcmd_rt('gobuster dir -u https://'+webserv['ip']+':'+webserv['port']+' -w wordlists/bustlist.txt -o '+output_dir+'/auto_osint_output/web/gobuster/'+webserv['ip']+'.out',timeout=timeout)
                     else:
-                        runcmd_rt('gobuster dir -u http://'+webserv['ip']+':'+webserv['port']+' -w wordlists/bustlist.txt -o '+output_dir+'/auto_osint_output/gobuster/'+webserv['ip']+'.out',timeout=timeout)
-                print(webserver_list)
+                        runcmd_rt('gobuster dir -u http://'+webserv['ip']+':'+webserv['port']+' -w wordlists/bustlist.txt -o '+output_dir+'/auto_osint_output/web/gobuster/'+webserv['ip']+'.out',timeout=timeout)
+                    return (webserver_list,'web')
     else:
         sys.stderr.write('web module dependency error!\nquitting...\n')
         sys.exit(1)
@@ -274,6 +296,12 @@ if __name__=='__main__':
 
         input_data = (input_domain,input_ip)
 
-        for module in module_table.keys():
-            if module in args.modules.split(','):
-                previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file)
+        if 'all' not in args.modules.split(','):
+            for module in module_table.keys():
+                if module in args.modules.split(','):
+                    previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file)
+        else:
+            all_mods = 'domain,ip,web'
+            for module in module_table.keys():
+                if module in all_mods.split(','):
+                    previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file)
