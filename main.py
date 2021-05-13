@@ -189,7 +189,7 @@ def web(input_data,timeout,output_dir,stdout,errlog_file):
                     except OSError:
                         sys.stderr.write('unable to create whatweb directory!\nquitting...\n')
                         return (None,'web')
-                    open(output_dir+'/auto_osint_output/web/whatweb/'+webserv['ip']+'.txt','w').write(str(webserv+'\n'))
+                    open(output_dir+'/auto_osint_output/web/whatweb/'+webserv['ip']+'.txt','w').write(str(webserv)+'\n')
                     if stdout:
                         sys.stdout.write(str(webserv+'\n'))
                     sys.stderr.write('running gobuster on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
