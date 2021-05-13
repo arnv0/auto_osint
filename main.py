@@ -1,7 +1,4 @@
-#!/bin/sh
-"""true"
-exec /usr/bin/python3 -u "$0" "$@"
-"""
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -58,8 +55,8 @@ def domain(input_data,timeout,output_dir,stdout,errlog_file):
     domain_ip_file = open(outpath+'domain-ip.list','w')
     input_domain = input_data[0]
     if len(input_domain) == 0:
-        sys.stderr.write('domain module specified without any input domains!\nquitting...\n')
-        sys.exit(1)
+        sys.stderr.write('domain module specified without any input domains!\nskipping module...\n')
+        return (None,'domain')
     big_domain_list = []
     domain_ip_table = {}
     failed_lookups = []
@@ -99,8 +96,8 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
     input_ip = input_data[1]
     failed_scans = []
     if len(input_ip) == 0:
-        sys.stderr.write('ip module specified without any input IP addresses!\nquitting...\n')
-        sys.exit(1)
+        sys.stderr.write('ip module specified without any input IP addresses!\nskipping...\n')
+        return (None,'ip')
     big_ip_list = []
     if previous_input != None:
         if previous_input[1] == 'domain':
@@ -111,7 +108,7 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
             big_ip_list = list(set(big_ip_list))
             input_ip = input_ip + big_ip_list
     try:
-        os.mkdir(output_dir+'/auto_osint_output'+'/nmap')
+        os.makedirs(output_dir+'/auto_osint_output'+'/nmap',exist_ok=True)
     except OSError:
         sys.stderr.write('unable to create nmap directory!\nquitting...\n')
         sys.exit(1)
@@ -126,7 +123,7 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
         else:
             ip_port_table[ip] = tmp
     try:
-        os.mkdir(output_dir+'/auto_osint_output'+'/port_scans')
+        os.makedirs(output_dir+'/auto_osint_output'+'/port_scans',exist_ok=True)
     except OSError:
         sys.stderr.write('unable to create port_scans directory!\nquitting...\n')
         sys.exit(1)
@@ -179,7 +176,7 @@ def web(input_data,timeout,output_dir,stdout,errlog_file):
                     webserv['backend'] = backend.decode().strip('\n')
                     sys.stderr.write('running gobuster on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
                     try:
-                        os.mkdir(output_dir+'/auto_osint_output'+'/gobuster')
+                        os.makedirs(output_dir+'/auto_osint_output'+'/gobuster',exist_ok=True)
                     except OSError:
                         sys.stderr.write('unable to create subdirectory for gobuster!\n')
                     if webserv['ssl']:
@@ -248,7 +245,7 @@ if __name__=='__main__':
         args_valid = False
     else:
         try:
-            os.mkdir(args.output_dir+'/auto_osint_output')
+            os.makedirs(args.output_dir+'/auto_osint_output',exist_ok=True)
         except OSError as err:
             sys.stderr.write('cannot create subdirectory!\n')
             args_valid = False
