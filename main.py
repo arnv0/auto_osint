@@ -63,6 +63,7 @@ def domain(input_data,timeout,output_dir,stdout,errlog_file):
         sys.stderr.write('domain module specified without any input domains!\nskipping module...\n')
         return (None,'domain')
     big_domain_list = []
+    big_domain_list = big_domain_list + input_domain
     domain_ip_table = {}
     failed_lookups = []
     for d in input_domain:
@@ -98,12 +99,9 @@ def domain(input_data,timeout,output_dir,stdout,errlog_file):
 
 def ip(input_data,timeout,output_dir,stdout,errlog_file):
     global previous_input
+    big_ip_list = []
     input_ip = input_data[1]
     failed_scans = []
-    if len(input_ip) == 0:
-        sys.stderr.write('ip module specified without any input IP addresses!\nskipping...\n')
-        return (None,'ip')
-    big_ip_list = []
     if previous_input != None:
         if previous_input[1] == 'domain':
             tmp_ip_data = previous_input[0].values()
@@ -112,6 +110,9 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
                     big_ip_list.append(j)
             big_ip_list = list(set(big_ip_list))
             input_ip = input_ip + big_ip_list
+    if len(input_ip) == 0:
+        sys.stderr.write('ip module specified without any input IP addresses!\nskipping...\n')
+        return (None,'ip')
     try:
         os.makedirs(output_dir+'/auto_osint_output'+'/ip/nmap',exist_ok=True)
     except OSError:
@@ -194,7 +195,7 @@ def web(input_data,timeout,output_dir,stdout,errlog_file):
                         return (None,'web')
                     open(output_dir+'/auto_osint_output/web/whatweb/'+webserv['ip']+'.txt','w').write(str(webserv)+'\n')
                     if stdout:
-                        sys.stdout.write(str(webserv+'\n'))
+                        sys.stdout.write(str(webserv)+'\n')
                     sys.stderr.write('running gobuster on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
                     try:
                         os.makedirs(output_dir+'/auto_osint_output'+'/web/gobuster',exist_ok=True)
