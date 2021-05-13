@@ -175,7 +175,7 @@ def web(input_data,timeout,output_dir,stdout,errlog_file):
                 sys.stderr.write('webservers found!\n')
                 for webserv in webserver_list:
                     sys.stderr.write('running whatweb on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
-                    backend = runcmd_rt('whatweb --color=never '+webserv['ip']+':'+webserv['port'])
+                    backend = runcmd_rt('whatweb --color=never '+webserv['ip']+':'+webserv['port'],timeout=timeout)
                     webserv['backend'] = backend.decode().strip('\n')
                     sys.stderr.write('running gobuster on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
                     try:
@@ -183,10 +183,11 @@ def web(input_data,timeout,output_dir,stdout,errlog_file):
                     except OSError:
                         sys.stderr.write('unable to create subdirectory for gobuster!\n')
                     if webserv['ssl']:
+                        sys.stderr.write('running sslscan on {}'.format(webserv['ip']+':'+webserv['port']+'...\n'))
+                        runcmd_rt('sslscan --xml='+output_dir+'/auto_osint_output/ssl/'+webserv['ip']+'.xml'+webserv['ip']+':'+webserv['port'],timeout=timeout)
                         runcmd_rt('gobuster dir -u https://'+webserv['ip']+':'+webserv['port']+' -w wordlists/bustlist.txt -o '+output_dir+'/auto_osint_output/gobuster/'+webserv['ip']+'.out',timeout=timeout)
                     else:
                         runcmd_rt('gobuster dir -u http://'+webserv['ip']+':'+webserv['port']+' -w wordlists/bustlist.txt -o '+output_dir+'/auto_osint_output/gobuster/'+webserv['ip']+'.out',timeout=timeout)
-
                 print(webserver_list)
     else:
         sys.stderr.write('web module dependency error!\nquitting...\n')
