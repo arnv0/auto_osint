@@ -163,6 +163,9 @@ def web(input_data,timeout,output_dir,stdout,errlog_file):
         sys.exit(1)
     elif previous_input[1] == 'ip':
         ip_port_table = previous_input[0]
+        if ip_port_table == None:
+            sys.stderr.write('no open ports detected by web module\n')
+            return (None,'web')
         if ip_port_table == {}:
             sys.stderr.write('web module was unable to detect any webservers!\n')
             return (None,'web')
