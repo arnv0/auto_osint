@@ -8,8 +8,11 @@ from subprocess import TimeoutExpired
 import shlex
 import argparse
 import re
+import requests
 
 ip_regex = re.compile('^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$')
+email_regex = re.compile('^[a-z0-9]+[\._]?[ a-z0-9]+[@]\w+[. ]\w{2,3}$')
+
 
 
 _parser = argparse.ArgumentParser(prog='autosint',description='automate osint activity')
@@ -50,7 +53,7 @@ def runcmd_rt(cmd,input=b'',timeout=0):
         return stdout
 
 #domain enumeration
-def domain(input_data,timeout,output_dir,stdout,errlog_file):
+def domain(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
     outpath = output_dir+'/auto_osint_output/domain/'
     try:
         os.makedirs(output_dir+'/auto_osint_output'+'/domain',exist_ok=True)
@@ -97,7 +100,7 @@ def domain(input_data,timeout,output_dir,stdout,errlog_file):
             sys.stdout.write(record+'\n')
     return (domain_ip_table,'domain')
 
-def ip(input_data,timeout,output_dir,stdout,errlog_file):
+def ip(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
     global previous_input
     big_ip_list = []
     input_ip = input_data[1]
@@ -149,7 +152,7 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file):
     return (ip_port_table,'ip')
 
 
-def web(input_data,timeout,output_dir,stdout,errlog_file):
+def web(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
     global previous_input
     input_ip = input_data[0]
     input_domain = input_data[1]
@@ -215,8 +218,19 @@ def web(input_data,timeout,output_dir,stdout,errlog_file):
                         runcmd_rt('gobuster dir -u http://'+webserv['ip']+':'+webserv['port']+' -w wordlists/bustlist.txt -o '+output_dir+'/auto_osint_output/web/gobuster/'+webserv['ip']+'.out',timeout=timeout)
                     return (webserver_list,'web')
     else:
-        sys.stderr.write('web module dependency error!\nquitting...\n')
+        sys.stderr.write('web module dependency error!\nip module must be run with web!\nquitting...\n')
         sys.exit(1)
+
+def email(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
+    global previous_input
+    if previous_input[1] == 'domain':
+        domain_list = list(previous_input[0].keys())
+    input_email = input_data[2]
+    print(domain_list)
+    if len(input_email) == 0:
+        sys.stderr.write('email module got no input email addresses!\n')
+        return (None,'email')
+
 
 #debug
 def debug(*anyargs):
@@ -227,11 +241,23 @@ def tbd(*anyargs):
 
 args = _parser.parse_args()
 
-module_table = {'debug':debug,'domain':domain,'ip':ip, 'web':web}
+module_table = {'debug':debug, 'domain':domain, 'email':email, 'ip':ip, 'web':web}
 
 global previous_input
 
 if __name__=='__main__':
+
+
+    #read api keys
+    if os.path.isfile('./api.keys'):
+        api_keys = {}
+        api_key_file = open('api.keys','r').readlines()
+        for line in api_key_file:
+            api_keys[line.strip().split(':')[0]] = line.strip().split(':')[1]
+    else:
+        sys.stderr.write('api keys missing!\n')
+        sys.exit(1)
+
 
     global previous_input
     previous_input = (None,None)
@@ -286,21 +312,24 @@ if __name__=='__main__':
         input_data = list(filter(None,input_data))
         input_ip = []
         input_domain = []
+        input_email = []
 
         for i in input_data:
             if ip_regex.match(i):
                 input_ip.append(i)
+            if email_regex.match(i):
+                input_email.append(i)
             else:
                 input_domain.append(i)
 
-        input_data = (input_domain,input_ip)
+        input_data = (input_domain,input_ip,input_email)
 
         if 'all' not in args.modules.split(','):
             for module in module_table.keys():
                 if module in args.modules.split(','):
-                    previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file)
+                    previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file,api_keys)
         else:
-            all_mods = 'domain,ip,web'
+            all_mods = 'domain,email,ip,web'
             for module in module_table.keys():
                 if module in all_mods.split(','):
-                    previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file)
+                    previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file,api_keys)
