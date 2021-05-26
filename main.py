@@ -9,6 +9,7 @@ import shlex
 import argparse
 import re
 import requests
+import json
 
 ip_regex = re.compile('^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$')
 email_regex = re.compile('^[a-z0-9]+[\._]?[ a-z0-9]+[@]\w+[. ]\w{2,3}$')
@@ -23,6 +24,7 @@ _parser.add_argument('--input',type=str,help='comma seperated list of domains an
 _parser.add_argument('--infile',type=str,help='file containing newline seperated list of domains and/or ip addresses')
 _parser.add_argument('--stdout',action='store_true',help='write output to stdout')
 _parser.add_argument('-o',dest='output_dir',default='.',help='output directory. by default writes output to current directory')
+_parser.add_argument('--mode',dest='mode',default='LIMITED',help='LIMITED OR UNLIMITED for API calls')
 
 #wrapper around subprocess.Popen
 def runcmd_rt(cmd,input=b'',timeout=0):
@@ -53,7 +55,7 @@ def runcmd_rt(cmd,input=b'',timeout=0):
         return stdout
 
 #domain enumeration
-def domain(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
+def domain(input_data,timeout,output_dir,stdout,errlog_file,api_keys,mode):
     outpath = output_dir+'/auto_osint_output/domain/'
     try:
         os.makedirs(output_dir+'/auto_osint_output'+'/domain',exist_ok=True)
@@ -100,7 +102,7 @@ def domain(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
             sys.stdout.write(record+'\n')
     return (domain_ip_table,'domain')
 
-def ip(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
+def ip(input_data,timeout,output_dir,stdout,errlog_file,api_keys,mode):
     global previous_input
     big_ip_list = []
     input_ip = input_data[1]
@@ -152,7 +154,7 @@ def ip(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
     return (ip_port_table,'ip')
 
 
-def web(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
+def web(input_data,timeout,output_dir,stdout,errlog_file,api_keys,mode):
     global previous_input
     input_ip = input_data[0]
     input_domain = input_data[1]
@@ -221,15 +223,60 @@ def web(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
         sys.stderr.write('web module dependency error!\nip module must be run with web!\nquitting...\n')
         sys.exit(1)
 
-def email(input_data,timeout,output_dir,stdout,errlog_file,api_keys):
+def email(input_data,timeout,output_dir,stdout,errlog_file,api_keys,mode):
+    MODE=mode
+    sys.stderr.write('using mode {}\n'.format(MODE))
+    try:
+        os.makedirs(output_dir+'/auto_osint_output'+'/email/',exist_ok=True)
+    except OSError:
+        sys.stderr.write('unable to create subdirectory for emails!\n')
+        return (None,'email')
+    print('email')
     global previous_input
     if previous_input[1] == 'domain':
         domain_list = list(previous_input[0].keys())
     input_email = input_data[2]
-    print(domain_list)
+    input_domain = input_data[0]
+    if MODE=='UNLIMITED':
+        for domain in domain_list:
+            tmp = json.loads(requests.get('https://api.hunter.io/v2/domain-search?domain={0}&api_key={1}'.format(domain,api_keys['hunterio'])))
+            for i in tmp['data']['emails']:
+                emailid = str(i['value'])
+                sys.stderr.write('generating personnel file for {}...\n'.format(emailid))
+                fname = str(i['first_name'])
+                lname = str(i['last_name'])
+                srclist = []
+                for j in i['sources']:
+                    srclist.append(j['uri'])
+                sources = '\t\n'.join(srclist)
+                linkedin = str(i['linkedin'])
+                twitter = str(i['twitter'])
+                phone_no = str(i['phone_number'])
+                open(output_dir+'/auto_osint_output/email/'+str(emailid),'w').write('Email: '+ emailid + '\n' + 'Name: ' + fname + ' '+ lname + '\n' + 'Source: ' + sources + '\n' + 'Phone: ' + phone_no + '\n' + 'LinkedIn: ' + linkedin + '\n' + 'Twitter: ' + twitter + '\n')
+                input_email.append(str(i['value']))
+    else:
+        x = json.loads(open('testdata','r').read())
+        for i in x['data']['emails']:
+            emailid = str(i['value'])
+            sys.stderr.write('generating personnel file for {}...\n'.format(emailid))
+            fname = str(i['first_name'])
+            lname = str(i['last_name'])
+            srclist = []
+            for j in i['sources']:
+                srclist.append(j['uri'])
+            sources = '\t\n'.join(srclist)
+            linkedin = str(i['linkedin'])
+            twitter = str(i['twitter'])
+            phone_no = str(i['phone_number'])
+            open(output_dir+'/auto_osint_output/email/'+str(emailid),'w').write('Email: '+ emailid + '\n' + 'Name: ' + fname + ' '+ lname + '\n' + 'Source: ' + sources + '\n' + 'Phone: ' + phone_no + '\n' + 'LinkedIn: ' + linkedin + '\n' + 'Twitter: ' + twitter + '\n')
+            input_email.append(str(i['value']))
+    input_email = list(set(input_email))
     if len(input_email) == 0:
         sys.stderr.write('email module got no input email addresses!\n')
         return (None,'email')
+    else:
+        for e in input_email:
+            sys.stdout.write(str(e)+'\n')
 
 
 #debug
@@ -327,9 +374,9 @@ if __name__=='__main__':
         if 'all' not in args.modules.split(','):
             for module in module_table.keys():
                 if module in args.modules.split(','):
-                    previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file,api_keys)
+                    previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file,api_keys,args.mode)
         else:
             all_mods = 'domain,email,ip,web'
             for module in module_table.keys():
                 if module in all_mods.split(','):
-                    previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file,api_keys)
+                    previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file,api_keys,args.mode)
