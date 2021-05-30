@@ -239,7 +239,7 @@ def email(input_data,timeout,output_dir,stdout,errlog_file,api_keys,mode):
     input_domain = input_data[0]
     if MODE=='UNLIMITED':
         for domain in domain_list:
-            tmp = json.loads(requests.get('https://api.hunter.io/v2/domain-search?domain={0}&api_key={1}'.format(domain,api_keys['hunterio'])))
+            tmp = json.loads(requests.get('https://api.hunter.io/v2/domain-search?domain={0}&limit=100000&api_key={1}'.format(domain,api_keys['hunterio'])))
             for i in tmp['data']['emails']:
                 emailid = str(i['value'])
                 sys.stderr.write('generating personnel file for {}...\n'.format(emailid))
@@ -255,7 +255,18 @@ def email(input_data,timeout,output_dir,stdout,errlog_file,api_keys,mode):
                 open(output_dir+'/auto_osint_output/email/'+str(emailid),'w').write('Email: '+ emailid + '\n' + 'Name: ' + fname + ' '+ lname + '\n' + 'Source: ' + sources + '\n' + 'Phone: ' + phone_no + '\n' + 'LinkedIn: ' + linkedin + '\n' + 'Twitter: ' + twitter + '\n')
                 input_email.append(str(i['value']))
     else:
-        x = json.loads(open('testdata','r').read())
+        try:
+            x = json.loads(open('test_data/testdata','r').read())
+        except:
+            sys.stderr.write('unable to open test data!\n')
+            return (None,'email')
+        rep_data = []
+        for i in range(0,9):
+            try:
+                rep_data.append(json.loads(open('test_data/email_rep'+str(i),'r').read()))
+            except:
+                sys.stderr.write('unable to open test data!\n')
+                return (None,'email')
         for i in x['data']['emails']:
             emailid = str(i['value'])
             sys.stderr.write('generating personnel file for {}...\n'.format(emailid))
@@ -270,14 +281,62 @@ def email(input_data,timeout,output_dir,stdout,errlog_file,api_keys,mode):
             phone_no = str(i['phone_number'])
             open(output_dir+'/auto_osint_output/email/'+str(emailid),'w').write('Email: '+ emailid + '\n' + 'Name: ' + fname + ' '+ lname + '\n' + 'Source: ' + sources + '\n' + 'Phone: ' + phone_no + '\n' + 'LinkedIn: ' + linkedin + '\n' + 'Twitter: ' + twitter + '\n')
             input_email.append(str(i['value']))
+        for i in rep_data:
+            email = str(i['email'])
+            sys.stderr.write('checking credentials for {}\n'.format(email))
+            leaked = str(i['details']['credentials_leaked'])
+            data_breach = str(i['details']['data_breach'])
+            deliverable = str(i['details']['deliverable'])
+            primary = str(i['details']['primary_mx'])
+            spoofable = str(i['details']['spoofable'])
+            spf = str(i['details']['spf_strict'])
+            dmarc = str(i['details']['dmarc_enforced'])
+            profiles = []
+            for j in i['details']['profiles']:
+                profiles.append(j)
+            profiles_str = ','.join(profiles)
+            if profiles_str == '':
+                profiles_str = 'None'
+            try:
+                open(output_dir+'/auto_osint_output/email/'+str(email),'a').write('Leaked: ' + leaked +'\nData Breach: ' + data_breach + '\nDeliverable: ' + deliverable + '\nPrimary Mail Server: ' + primary + '\nSecurity:\n\tSPF: ' + spf +'\n\tDMARC: ' + dmarc + '\n\tSpoofable: ' + spoofable + '\nProfiles: ' + profiles_str)
+            except Exception as err:
+                sys.stderr.write('unable to append test data!\n')
+                continue
     input_email = list(set(input_email))
-    if len(input_email) == 0:
-        sys.stderr.write('email module got no input email addresses!\n')
-        return (None,'email')
-    else:
+    if mode=='UNLIMITED':
         for e in input_email:
-            sys.stdout.write(str(e)+'\n')
-
+            sys.stderr.write('checking credentials for {}\n'.format(e))
+            i = requests.get('https://emailrep.io/{emailid}'.format(e),headers={'User-Agent':'auto_osint_py',Key:api_keys['emailrep']})
+            email = str(i['email'])
+            sys.stderr.write('checking credentials for {}\n'.format(email))
+            leaked = str(i['details']['credentials_leaked'])
+            data_breach = str(i['details']['data_breach'])
+            deliverable = str(i['details']['deliverable'])
+            primary = str(i['details']['primary_mx'])
+            spoofable = str(i['details']['spoofable'])
+            spf = str(i['details']['spf_strict'])
+            dmarc = str(i['details']['dmarc_enforced'])
+            profiles = []
+            profiles = []
+            for j in i['details']['profiles']:
+                profiles.append(j)
+            profiles_str = ','.join(profiles)
+            if profiles_str == '':
+                profiles_str = 'None'
+            try:
+                open(output_dir+'/auto_osint_output/email/'+str(email),'a').write('Leaked: ' + leaked +'\nData Breach: ' + data_breach + '\nDeliverable: ' + deliverable + '\nPrimary Mail Server: ' + primary + '\nSecurity:\n\tSPF: ' + spf +'\n\tDMARC: ' + dmarc + '\n\tSpoofable: ' + spoofable + '\nProfiles: ' + profiles_str)
+            except:
+                sys.stderr.write('unable to append test data!\n')
+                continue
+        if len(input_email) == 0:
+            sys.stderr.write('email module got no input email addresses!\n')
+            return (None,'email')
+    else:
+        em_log = ''
+        for e in input_email:
+            sys.stdout.write('found: '+str(e)+'\n')
+            em_log = em_log + str(e) + '\n'
+            open(output_dir+'/auto_osint_output/email/email.list','w').write(em_log)
 
 #debug
 def debug(*anyargs):
