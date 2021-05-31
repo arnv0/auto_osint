@@ -31,7 +31,7 @@ The input to the tool is a comma seperated list of domains and/or IP addresses a
 # MODULES
 
 > ## domain
-Gather subdomains of a given root domain.
+> Gather subdomains of a given root domain.
 Inputs can be specified via the `--input` argument which accept a comma seperated list of domains or via the `--infile` argument which accepts the path of a file containing a newline seperated list of domains.
 >##### Example
 >```
