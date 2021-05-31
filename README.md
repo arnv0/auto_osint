@@ -75,18 +75,18 @@ Inputs can be specified via the `--input` argument which accept a comma seperate
 >--modules domain,ip,web,email
 >```
 
->## ``--input``
+> ## ``--input``
 > **Type**: Required
 > Accepts a comma seperated list of domains and IP addresses
-> #####Example
+> ##### Example
 > ```
 > --input example.com,192.168.1.21
 > ```
 
->## ``--infile``
->**Type**: Required
->Accepts a path to a file containing a newline seperated list of domains and IP addresses.
->#####Example
+> ## ``--infile``
+> **Type**: Required
+> Accepts a path to a file containing a newline seperated list of domains and IP addresses.
+> #####Example
 >```
 >--infile input.txt
 >cat input.txt
@@ -94,26 +94,26 @@ Inputs can be specified via the `--input` argument which accept a comma seperate
 >192.168.1.21
 >```
 
->## ``--stdout``
->**Type**: Optional
->If specified, prints output to stdout in addition to saving it in a file.
->#####Example
+> ## ``--stdout``
+> **Type**: Optional
+> If specified, prints output to stdout in addition to saving it in a file.
+> #####Example
 >```
 >auto_osint_py \[ARGS\] --stdout
 >```
 
->## ``--timeout``
->**Type**: Optional
->Specifies timeout (in seconds) for the tool. If any subprocess takes longer than timeout, it is terminated.
->#####Example
+> ## ``--timeout``
+> **Type**: Optional
+> Specifies timeout (in seconds) for the tool. If any subprocess takes longer than timeout, it is terminated.
+> #####Example
 >```
 >--timeout 100
 >```
 
->## ``-o``
->**Type**: Optional
->Specified output directory.
->#####Example
+> ## ``-o``
+> **Type**: Optional
+> Specified output directory.
+> #####Example
 >```
 >-o /tmp/output
 >```
