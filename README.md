@@ -128,3 +128,13 @@ Inputs can be specified via the `--input` argument which accept a comma seperate
 > hunterio:<API KEY>
 > emailrep:<API KEY>
 > ```
+
+# DEPENDENCIES
+
+> - ## Python3
+> - ## sublister
+> - ## nmap
+> - ## whatweb
+> - ## sslscan
+> - ## gobuster
+
