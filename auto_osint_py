@@ -347,7 +347,7 @@ def tbd(*anyargs):
 
 args = _parser.parse_args()
 
-module_table = {'debug':debug, 'domain':domain, 'email':email, 'ip':ip, 'web':web}
+module_table = {'debug':debug, 'domain':domain, 'ip':ip, 'web':web, 'email':email}
 
 global previous_input
 
@@ -435,7 +435,7 @@ if __name__=='__main__':
                 if module in args.modules.split(','):
                     previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file,api_keys,args.mode)
         else:
-            all_mods = 'domain,email,ip,web'
+            all_mods = 'domain,ip,web,email'
             for module in module_table.keys():
                 if module in all_mods.split(','):
                     previous_input = module_table[module](input_data,args.timeout,args.output_dir,args.stdout,errlog_file,api_keys,args.mode)
