@@ -231,15 +231,26 @@ def email(input_data,timeout,output_dir,stdout,errlog_file,api_keys,mode):
     except OSError:
         sys.stderr.write('unable to create subdirectory for emails!\n')
         return (None,'email')
-    print('email')
     global previous_input
     if previous_input[1] == 'domain':
         domain_list = list(previous_input[0].keys())
     input_email = input_data[2]
     input_domain = input_data[0]
+    if len(input_domain) == 0:
+        sys.stderr.write('email module encountered an error!...\n')
+        return (None,'email')
     if MODE=='UNLIMITED':
         for domain in domain_list:
-            tmp = json.loads(requests.get('https://api.hunter.io/v2/domain-search?domain={0}&limit=100000&api_key={1}'.format(domain,api_keys['hunterio'])))
+            tmp = json.loads(requests.get('https://api.hunter.io/v2/domain-search?domain={0}&limit=100000&api_key={1}'.format(domain,api_keys['hunterio'])).text)
+            try:
+                testvar = tmp['data']
+            except KeyError:
+                try:
+                    testvar = tmp['error']
+                    sys.stderr.write(tmp['error'][])
+                except KeyError:
+                    sys.stderr.write('invalid response from API!\n')
+                    return (None,'email')
             for i in tmp['data']['emails']:
                 emailid = str(i['value'])
                 sys.stderr.write('generating personnel file for {}...\n'.format(emailid))
@@ -306,7 +317,8 @@ def email(input_data,timeout,output_dir,stdout,errlog_file,api_keys,mode):
     if mode=='UNLIMITED':
         for e in input_email:
             sys.stderr.write('checking credentials for {}\n'.format(e))
-            i = requests.get('https://emailrep.io/{emailid}'.format(e),headers={'User-Agent':'auto_osint_py',Key:api_keys['emailrep']})
+            tmp = requests.get('https://emailrep.io/{emailid}'.format(e),headers={'User-Agent':'auto_osint_py',Key:api_keys['emailrep']}).text
+            i = json.loads(tmp)
             email = str(i['email'])
             sys.stderr.write('checking credentials for {}\n'.format(email))
             leaked = str(i['details']['credentials_leaked'])

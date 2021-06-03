@@ -1,6 +1,10 @@
 # TODO
 Bugfixes in email module
 
+# IMPORTANT
+
+In case you encounter any bug or error in the program, please include a log / error message and raise an issue. I will get back to you ASAP and try my best to fix the bug.
+
 # NAME
 auto_osint_py - automate external scanning for red teams
 
