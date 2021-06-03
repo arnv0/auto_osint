@@ -1,3 +1,6 @@
+# TODO
+Bugfixes in email module
+
 # NAME
 auto_osint_py - automate external scanning for red teams
 
