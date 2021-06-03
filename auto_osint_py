@@ -247,7 +247,8 @@ def email(input_data,timeout,output_dir,stdout,errlog_file,api_keys,mode):
             except KeyError:
                 try:
                     testvar = tmp['error']
-                    sys.stderr.write(tmp['error'][])
+                    sys.stderr.write(tmp['error']['details']+'\n')
+                    return (None,'email')
                 except KeyError:
                     sys.stderr.write('invalid response from API!\n')
                     return (None,'email')
